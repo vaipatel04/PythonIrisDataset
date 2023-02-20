@@ -1,7 +1,6 @@
 
 import numpy as np
 import random as rd
-import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt  # sees how the data is spreadout
 from pandas import DataFrame
@@ -62,27 +61,63 @@ def histplots(data:DataFrame):
 def scatterplots(data:DataFrame):
     colours = {'Iris-setosa': 'red', 'Iris-virginica': 'blue', 'Iris-versicolor': 'green'} #create a dictionary for colours so we can visualize the scatter plot better
     plt.scatter(
-        data[2],
-        data[3],
+        x=data[2],
+        y=data[3],
         c=data['species'].map(colours)
     )
+    plt.show()
     plt.scatter(
-        data[0],
-        data[1],
+        x=data[0],
+        y=data[1],
         c=data['species'].map(colours)
     )
     plt.show()
 
-def correlation(data:DataFrame):
-    print(data.corr(data))
+def correlation(data):
+    print(data.corr())
+
+def boxplots(data:DataFrame):
+    plt.boxplot([data[0], data[1], data[2], data[3]])
+    plt.show()
+    #data.boxplot(column=[0], by=['species'])
+    #plt.show()
+
+def set_color(bp):
+        plt.setp(bp['boxes'][0], color='blue')
+        plt.setp(bp['boxes'][1], color='red')
+        plt.setp(bp['boxes'][2], color='green')
+
+def combinedbox(data:DataFrame): #combines all 12 boxplots into 1 for a cleaner finish
+    A = [data[0][data.species == 'Iris-setosa'], data[0][data.species == 'Iris-virginica'], data[0][data.species == 'Iris-versicolor']]
+    B = [data[1][data.species == 'Iris-setosa'], data[1][data.species == 'Iris-virginica'], data[1][data.species == 'Iris-versicolor']]
+    C = [data[2][data.species == 'Iris-setosa'], data[2][data.species == 'Iris-virginica'], data[2][data.species == 'Iris-versicolor']]
+    D = [data[3][data.species == 'Iris-setosa'], data[3][data.species == 'Iris-virginica'], data[3][data.species == 'Iris-versicolor']]
+
+    # add this to remove outlier symbols: 0, '',
+    bp = plt.boxplot(A, 0, '', positions=[1, 2, 3], widths=0.7)
+    set_color(bp)
+    bp = plt.boxplot(B, 0, '', positions=[5, 6, 7], widths=0.7)
+    set_color(bp)
+    bp = plt.boxplot(C, 0, '', positions=[9, 10, 11], widths=0.7)
+    set_color(bp)
+    bp = plt.boxplot(D, 0, '', positions=[13, 14, 15], widths=0.7)
+    set_color(bp)
+    bp.set_xticklables(["sepal length", "sepal width", "petal length", "petal width"])
+
+    # ax = plt.axes()
+    # ax.set_xticks([2, 6, 10, 14])
+    # ax.set_xticklabels(["sepal length", "sepal width", "petal length", "petal width"])
+    plt.show()
 
 if __name__ == '__main__':
     data = fetchData()
     cleanedData = cleanData(data)
     descriptiveAnalysis(cleanedData)
     #print(x) # shows 4 attributes, and species; we dont need the ID tho
-    #print(valueCounts(cleanedData))
-    #print(histplots(cleanedData))
-    #print(scatterplots(cleanedData))
+    print(valueCounts(cleanedData))
+    print(histplots(cleanedData))
+    print(scatterplots(cleanedData))
     correlation(cleanedData)
+    print(boxplots(cleanedData))
+    combinedbox(cleanedData)
 
